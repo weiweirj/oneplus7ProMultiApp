@@ -1,7 +1,6 @@
 package com.oneplus7pro.MultiApp;
 
-import android.os.Handler;
-import android.util.Log;
+import android.content.Context;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -12,11 +11,10 @@ public class Main implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         if (loadPackageParam.packageName.equals("com.android.settings")){
-            XposedHelpers.findAndHookMethod(loadPackageParam.classLoader.loadClass("com.oneplus.settings.apploader.OPApplicationLoader"), "initData",int.class, Handler.class, new XC_MethodHook() {
+            XposedHelpers.findAndHookMethod(loadPackageParam.classLoader.loadClass("com.oneplus.settings.apploader.OPApplicationLoader"), "multiAppPackageExcludeFilter", Context.class, String.class, new XC_MethodHook() {
                 @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    param.args[0]=0;
-                    super.beforeHookedMethod(param);
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    param.setResult(true);
                 }
             });
         }
